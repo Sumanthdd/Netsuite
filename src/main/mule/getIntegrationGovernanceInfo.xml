@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getIntegrationGovernanceInfoFlow" doc:id="dbc2ded7-fb8b-4f7e-a872-4e6e38b5464f" >
+		<http:listener doc:name="/getintginfo" doc:id="69d3d862-b051-4e45-b915-c9bcaabc5c2c" config-ref="HTTP_Listener_config" path="/getintginfo"/>
+		<netsuite:get-integration-governance-info doc:name="Get integration governance info" doc:id="8077fcfb-164d-4a98-9e52-21385039680f" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="f4ca595a-4b66-4176-a7a0-a69457a80682">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

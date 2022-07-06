@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<netsuite:config name="NetSuite_Config" doc:name="NetSuite Config" doc:id="084e128a-7035-43b4-a7f1-9791163d0317" >
+		<netsuite:token-based-authentication-connection consumerKey="27bcf0e1f3eeb708d96f1538f0c03661e609a19eb0facac1aec3715d6d9442e6" consumerSecret="85bbe6c4c16f091820f6414c82a3630c95dcd0fe1535ca97e802cac3c18e497e" tokenId="e6ca6ed55e61d4315de54e3e847299e5225304a86ed8783a370573da3a6de6e0" tokenSecret="5b09c3dfc12f5551675ccdee70ba4ed3db3c57374c7574dbe65dce3e28640eb4" account="TSTDRV1611468" wsdlVersion="V2020_2" />
+	</netsuite:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e9f31915-12c6-4d41-b4b3-cdf014c7cf16" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+</mule>

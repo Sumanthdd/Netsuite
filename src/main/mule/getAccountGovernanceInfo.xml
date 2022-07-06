@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getAccountGovernanceInfoFlow" doc:id="b60dedde-0551-42f4-abc7-a74e4534a3b6" >
+		<http:listener doc:name="/getaccgovinfo" doc:id="ce29ebba-0d4f-4401-a5c8-8553154f1e28" config-ref="HTTP_Listener_config" path="/getaccgovinfo"/>
+		<netsuite:get-account-governance-info doc:name="Get account governance info" doc:id="69d6ed2d-9ccf-460e-b187-0fb6d2a38cda" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="ee3a130e-9344-4100-8a77-ea3f3a22e603">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

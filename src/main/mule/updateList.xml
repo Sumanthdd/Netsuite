@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="updateListFlow" doc:id="9f90bf9b-3389-48a4-b641-5447a2b6cd21" >
+		<http:listener doc:name="/updatelist" doc:id="b373ddb7-9eb5-439c-958d-2ea3efbabe08" config-ref="HTTP_Listener_config" path="/updatelist"/>
+		<ee:transform doc:name="Employee input" doc:id="e23d3ed8-1854-4715-86b7-4717db73a04f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:employees.lists.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#updateList: {
+		ns01#record @(internalId: "7455", xsi#"type": "ns01:Employee"): {
+			ns01#firstName: "sumanth",
+			ns01#lastName: "Dussehra",
+			ns01#phone: "12345678"
+		},
+		ns01#record @(internalId: "7454", xsi#"type": "ns01:Employee"): {
+			ns01#firstName: "prathamesh",
+			ns01#lastName: "Badam",
+			ns01#phone: "12345678"
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:update-list doc:name="Employee" doc:id="94baae6a-e93c-42d8-b3dd-fd12b8cb8799" config-ref="NetSuite_Config" type="Employee" />
+		<ee:transform doc:name="to json" doc:id="7e4d955b-43da-42a5-abbc-05b06a123487">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

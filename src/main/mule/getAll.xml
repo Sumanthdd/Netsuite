@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getAllFlow" doc:id="028aed50-a6f3-4aba-82a0-121c0e9a5f3d" >
+		<http:listener doc:name="/getall" doc:id="77466b75-f132-4834-b0a1-d700ebef25a9" config-ref="HTTP_Listener_config" path="/getall"/>
+		<ee:transform doc:name="getall input" doc:id="f2cad57e-c41f-4b56-a225-04d77e0be46d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+---
+{
+	ns0#getAll: {
+		ns0#record @(recordType: "TaxAcct"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-all doc:name="TaxAcct" doc:id="72c5cd56-af92-46c3-ae22-a7f2b78a5e4d" config-ref="NetSuite_Config" type="TaxAcct" />
+		<ee:transform doc:name="to json" doc:id="737c7931-e841-4cc1-a02c-1edb96914adb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

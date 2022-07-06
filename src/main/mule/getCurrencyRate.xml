@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getCurrencyRateFlow" doc:id="071ce64a-0142-4bcc-93ef-6e2f4c07cb42" >
+		<http:listener doc:name="/getcrncyrate" doc:id="48724eca-bd20-4a35-ae09-172cebb5d2b0" config-ref="HTTP_Listener_config" path="/getcrncyrate"/>
+		<ee:transform doc:name="get currency rate input" doc:id="7c8d592a-e950-47d0-8028-498cb5fa8e1c">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#getCurrencyRate: {
+		ns0#currencyRateFilter: {
+			ns01#baseCurrency @(internalId: "1"): null
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-currency-rate doc:name="Get currency rate" doc:id="c5b3ec10-ffdf-43f1-b165-f8200fb626d3" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="685b928c-33c0-4e20-a425-cc0d1ee89ac6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="netsuiteFlow" doc:id="c37761b9-33e7-4093-baf1-4381810446a8" >
+		<http:listener doc:name="/asyncgetlist" doc:id="c806fd50-9f92-4d6b-96af-abea497723a4" config-ref="HTTP_Listener_config" path="/asyncgetlist"/>
+		<ee:transform doc:name="Transform Message" doc:id="62fbce06-d404-4da3-9c35-14dc632db205" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#asyncGetList: {
+		ns01#baseRef @(internalId: "2552" , "type": "employee", xsi#"type": "ns01:RecordRef"): null,
+		ns01#baseRef @(internalId: "2551" , "type": "employee", xsi#"type": "ns01:RecordRef"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:async-get-list doc:name="Async get list" doc:id="c18f665a-bd11-4905-bdcd-c9d7c659938d" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="7e2de14b-c990-4e80-9026-ce9f297e14a5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="netsuiteFlow1" doc:id="f79048c0-f6cb-459a-83a3-c8fc355491ab" >
+		<http:listener doc:name="/asyncsearch" doc:id="fbfc12de-79d1-4ebd-bda4-c08516c5f416" config-ref="HTTP_Listener_config" path="/asyncsearch"/>
+		<ee:transform doc:name="Transform Message" doc:id="2b5d0b4b-a4a9-47be-864c-abbac46177a2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0  urn:messages_2020_2.platform.webservices.netsuite.com
+ns ns01 urn:common_2020_2.platform.webservices.netsuite.com
+ns ns02 urn:core_2020_2.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#asyncSearch: {
+		ns0#searchRecord @("xmlns:ns01": ns01, xsi#"type": "ns01:EmployeeSearchBasic"): {
+			ns01#firstName @(operator: "is"): {
+				ns02#searchValue: "Alex"
+			}
+	}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:async-search doc:name="Async search" doc:id="4b475841-34bf-4bff-858e-86485fd45016" config-ref="NetSuite_Config" key="EmployeeSearchBasic" pageSize="10"/>
+		<ee:transform doc:name="Transform Message" doc:id="d4b6dd50-8ff7-4534-abdf-d5453b993e3c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="netsuiteFlow2" doc:id="8f58ca2f-d636-4cbf-babc-2e6566964c03" >
+		<http:listener doc:name="/getso" doc:id="8f46e0c5-0a9b-4bc6-8603-ac9a798e4cba" config-ref="HTTP_Listener_config" path="/getso"/>
+		<ee:transform doc:name="SalesOrder Input" doc:id="2ed008d7-b8e3-45d9-8943-cc200d058cd7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#get: {  
+		ns01#baseRef @(internalId: "1273" , "type": "salesOrder", xsi#"type": "ns01:RecordRef"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get doc:name="SalesOrder" doc:id="cbf7913e-692a-4090-a15c-3b5b2a201dce" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="356bfd86-1967-4e69-bc14-face4d7d58d2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="netsuiteFlow3" doc:id="9190c5ec-8beb-4743-a78d-3a859838b8c0" >
+		<http:listener doc:name="/getpo" doc:id="0f71a5d7-c9bb-4e9b-babd-d23256861379" config-ref="HTTP_Listener_config" path="/getpo"/>
+		<ee:transform doc:name="PurchaseOrder Input" doc:id="1e0f4024-86f1-41f9-a5e3-0b275d46f331" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+ns ns02 urn:common.platform.webservices.netsuite.com
+ns ns03 urn:sales.transactions.webservices.netsuite.com
+ns ns04 urn:customers.transactions.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#get: {  
+		ns01#baseRef @(internalId: "5712" , "type": "purchaseOrder", xsi#"type": "ns01:RecordRef"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get doc:name="PurchaseOrder" doc:id="40ee5c35-d569-4fbb-b538-dd58e7ac5f32" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="bcf64eb9-557d-457b-8397-fbee81bdecfc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

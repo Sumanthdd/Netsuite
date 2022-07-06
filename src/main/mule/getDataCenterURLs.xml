@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getDataCenterURLsFlow" doc:id="c4b818b1-4289-4bc4-a8a4-ab4f55909e35" >
+		<http:listener doc:name="/getdatacntr" doc:id="e9a38977-d1ff-44f7-b519-98f88c5e132b" config-ref="HTTP_Listener_config" path="/getdatacntr"/>
+		<netsuite:get-data-center-urls doc:name="Get data center urls" doc:id="d7ea8203-d100-4500-8f2f-456db84bf4b4" config-ref="NetSuite_Config" accountId="TSTDRV1611468" />
+		<ee:transform doc:name="to json" doc:id="6bb6746c-f5ab-4b99-b5b8-716c50469647">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="AddFlow" doc:id="0362c23c-641d-4b63-948e-f3e40303405a" >
+		<http:listener doc:name="/addso" doc:id="ca907001-256a-4e89-a2b2-c2ea732241e1" config-ref="HTTP_Listener_config" path="/addso"/>
+		<ee:transform doc:name="SalesOrder Input" doc:id="6810defa-25f0-48f4-afd0-28defa9c2bd2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:sales.transactions.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#add: {
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "506"): {
+						ns02#name: "ACC00006"
+					},
+					ns01#line: "1"
+				}
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:add doc:name="SalesOrder" doc:id="69c43c9f-e9d3-4276-8d96-da7a7d6abd04" config-ref="NetSuite_Config" type="SalesOrder" />
+		<ee:transform doc:name="to json" doc:id="150c9151-a827-4b05-a05a-00c7ae720100">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="AddFlow1" doc:id="bf67ac60-7c60-4cf7-98cc-402b065470c4" >
+		<http:listener doc:name="/addcust" doc:id="288c8641-65a8-4144-a416-0a6111ca40ac" config-ref="HTTP_Listener_config" path="/addcust"/>
+		<ee:transform doc:name="Customer input" doc:id="05aa797f-045d-47b3-8084-a3e613dc4213">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:relationships.lists.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+ns ns03 urn:relationships.lists.webservices.netsuite.com
+---
+{
+	ns0#add: {
+		ns01#record @(xsi#"type": "ns01:Customer"): {
+			ns03#firstName: "Sumanth",
+			ns03#lastName: "Dasari",
+			ns03#companyName: "SD Company",
+			ns03#email: "SDCompany@gmail.com",
+			ns03#subsidiary @(internalId: "1"): null
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:add doc:name="Customer" doc:id="3badf5b8-d86d-4b8a-bae4-ed9ef828a1fb" config-ref="NetSuite_Config" type="Customer" />
+		<ee:transform doc:name="to json" doc:id="43735642-f2dd-4861-a97b-5212cc2957a2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

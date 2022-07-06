@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getlistFlow" doc:id="066b72e6-7809-4480-820a-c6e4d86c320f" >
+		<http:listener doc:name="/getlistso" doc:id="509e8c39-7b2c-475a-87fc-33c387894608" config-ref="HTTP_Listener_config" path="/getlistso"/>
+		<ee:transform doc:name="salesOrder input" doc:id="974bc745-20f0-4d17-8f8c-5b6770750443" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#getList: {  
+		ns01#baseRef @(internalId: "1273" , "type": "salesOrder", xsi#"type": "ns01:RecordRef"): null,
+		ns01#baseRef @(internalId: "2034" , "type": "salesOrder", xsi#"type": "ns01:RecordRef"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-list doc:name="Sales Order" doc:id="ab603269-69b4-49b6-ac4a-aa0a5adfbea3" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="to json" doc:id="fcf65012-8ee1-4f6f-96ea-16fcb977705c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getlistFlow1" doc:id="3040795b-df25-41dc-99d3-f4f6f0f2a2aa" >
+		<http:listener doc:name="/getlistpo" doc:id="9f39b867-98cb-41ed-aba2-24d410976570" config-ref="HTTP_Listener_config" path="/getlistpo"/>
+		<ee:transform doc:name="purchaseOrder input" doc:id="ca9b94a4-349f-4dbd-be6a-6c56a492c2e7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#getList: {  
+		ns01#baseRef @(internalId: "4731" , "type": "purchaseOrder", xsi#"type": "ns01:RecordRef"): null,
+		ns01#baseRef @(internalId: "4858" , "type": "purchaseOrder", xsi#"type": "ns01:RecordRef"): null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-list doc:name="Purchase Order" doc:id="023ed4db-62d4-4ab5-a28d-fa23cff25abb" config-ref="NetSuite_Config"/>
+		<ee:transform doc:name="to json" doc:id="b9cbaa7b-1f0e-48b0-a243-79e629d33bc0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

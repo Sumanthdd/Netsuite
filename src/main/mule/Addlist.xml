@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="AddlistFlow" doc:id="b7186f38-70cf-4abb-b636-3c2189018624" >
+		<http:listener doc:name="/addlist" doc:id="53ef27dc-a09a-46e7-969f-d0a3134d44d3" config-ref="HTTP_Listener_config" path="/addlist"/>
+		<ee:transform doc:name="Employee input" doc:id="c33affc2-7f35-4f9b-9eeb-26f1ca9fbd03">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:employees.lists.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#addList: {
+		ns01#record @(xsi#"type": "ns01:Employee"): {
+			ns01#firstName: "Sumanth",
+			ns01#lastName: "Dasari",
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#subsidiary @(internalId: "1"): null
+		},
+		ns01#record @(xsi#"type": "ns01:Employee"): {
+			ns01#firstName: "Prathamesh",
+			ns01#lastName: "Kadam",
+			ns01#email: "Prathakadam@gmail.com",
+			ns01#subsidiary @(internalId: "1"): null
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:add-list doc:name="Employee" doc:id="9392114c-e27a-450f-99a6-f82f79e30d72" config-ref="NetSuite_Config" type="Employee" />
+		<ee:transform doc:name="to json" doc:id="8f97b63c-c377-414e-96e8-545c21834270">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

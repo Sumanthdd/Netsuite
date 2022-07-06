@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getBudgetExchangeRateFlow" doc:id="41abfe7d-b671-442b-8a4c-30ee4fcec6e5" >
+		<http:listener doc:name="/getbexrate" doc:id="06fec130-2c9c-4ba0-be7d-47516b20c3e6" config-ref="HTTP_Listener_config" path="/getbexrate"/>
+		<ee:transform doc:name="budget exchange rate input" doc:id="14e7dcf6-fc00-4970-ab0e-e4f4691a429a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#getBudgetExchangeRate: {
+		ns0#budgetExchangeRateFilter: {
+			ns01#period @(internalId: "3"): null
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-budget-exchange-rate doc:name="Get budget exchange rate" doc:id="7a57c65f-d9b6-4c46-9e29-fc46107caca1" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="516c1868-60cf-4396-ad49-573eebf6ab64">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

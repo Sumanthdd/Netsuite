@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getItemAvailabilityFlow" doc:id="073fdc95-8c10-4512-b4a5-e295eb300afc" >
+		<http:listener doc:name="/getitem" doc:id="f4b0094c-8bb7-430c-a525-ecfff90018c4" config-ref="HTTP_Listener_config" path="/getitem"/>
+		<ee:transform doc:name="Get Item Availability Input" doc:id="254999f2-8c3c-4ffa-b2d3-f6eed7f03dfb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#getItemAvailability: {
+		ns0#itemAvailabilityFilter: {
+			ns01#item: {
+				ns01#recordRef @(internalId: "390" , "type": "inventoryItem"): null
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-item-availability doc:name="Get item availability" doc:id="8b3cadde-7783-4bd1-894c-58b0a6c766e8" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="5c0e5c38-b051-4d84-9986-fabfff6d9557">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getasyncresultFlow" doc:id="7a1449bd-60ad-45b4-b766-1b4c41245acf" >
+		<http:listener doc:name="/getasyncresult" doc:id="4b028d96-a56c-409b-9fb4-79a36fbbe087" config-ref="HTTP_Listener_config" path="/getasyncresult"/>
+		<netsuite:get-async-result doc:name="Get async result" doc:id="ae2a8107-62ff-4c47-848c-1f41bb6a71f4" config-ref="NetSuite_Config" jobId="#[attributes.queryParams.JobID]" />
+		<ee:transform doc:name="to json" doc:id="dd0d27df-3cb9-48bc-a352-babd1f931ae0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
