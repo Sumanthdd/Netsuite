@@ -42,4 +42,71 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="updateListFlow1" doc:id="84c0a88a-f46c-477c-a8d1-b9233f114ba4" >
+		<http:listener doc:name="/updatelistso" doc:id="a962f904-8f45-4f68-9db4-5a009990a343" config-ref="HTTP_Listener_config" path="/updatelistso"/>
+		<ee:transform doc:name="SalesOrder input" doc:id="d197ab51-08cf-4264-a81b-30b7b92eb323">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:sales.transactions.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+---
+{
+	ns0#updateList: {
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthddasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "507"): {
+						ns02#name: "ACC00007"
+					},
+					ns01#line: "1"
+				},
+				ns01#item: {
+					ns01#item @(internalId: "510"): {
+						ns02#name: "ACC00009"
+					},
+					ns01#line: "2"
+				}
+			}
+		},
+        ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "510"): {
+						ns02#name: "ACC00009"
+					},
+					ns01#line: "1"
+				},
+				ns01#item: {
+					ns01#item @(internalId: "506"): {
+						ns02#name: "ACC00006"
+					},
+					ns01#line: "1"
+				}
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:update-list doc:name="SalesOrder" doc:id="77f02c82-05ee-45bb-be71-fc750e8faa5a" config-ref="NetSuite_Config" type="SalesOrder" />
+		<ee:transform doc:name="to json" doc:id="dbe63ac0-0073-4569-b305-9043970e77c2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>

@@ -8,36 +8,96 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
 	<flow name="AddlistFlow" doc:id="b7186f38-70cf-4abb-b636-3c2189018624" >
 		<http:listener doc:name="/addlist" doc:id="53ef27dc-a09a-46e7-969f-d0a3134d44d3" config-ref="HTTP_Listener_config" path="/addlist"/>
-		<ee:transform doc:name="Employee input" doc:id="c33affc2-7f35-4f9b-9eeb-26f1ca9fbd03">
+		<ee:transform doc:name="SalesOrder Input" doc:id="c33affc2-7f35-4f9b-9eeb-26f1ca9fbd03">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/xml
 ns ns0 urn:messages.platform.webservices.netsuite.com
-ns ns01 urn:employees.lists.webservices.netsuite.com
+ns ns01 urn:sales.transactions.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
 ns xsi http://www.w3.org/2001/XMLSchema-instance
 ---
 {
 	ns0#addList: {
-		ns01#record @(xsi#"type": "ns01:Employee"): {
-			ns01#firstName: "Sumanth",
-			ns01#lastName: "Dasari",
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
 			ns01#email: "Sumanthdasari@gmail.com",
-			ns01#subsidiary @(internalId: "1"): null
-		},
-		ns01#record @(xsi#"type": "ns01:Employee"): {
-			ns01#firstName: "Prathamesh",
-			ns01#lastName: "Kadam",
-			ns01#email: "Prathakadam@gmail.com",
-			ns01#subsidiary @(internalId: "1"): null
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "506"): {
+						ns02#name: "ACC00006"
+					},
+					ns01#line: "1"
+				}}},
+				ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "510"): {
+						ns02#name: "ACC00009"
+					},
+					ns01#line: "1"
+				}
+			}
 		}
-	}
-}]]></ee:set-payload>
+	
+}}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<netsuite:add-list doc:name="Employee" doc:id="9392114c-e27a-450f-99a6-f82f79e30d72" config-ref="NetSuite_Config" type="Employee" />
+		<netsuite:add-list doc:name="SalesOrder" doc:id="9392114c-e27a-450f-99a6-f82f79e30d72" config-ref="NetSuite_Config" type="SalesOrder" />
 		<ee:transform doc:name="to json" doc:id="8f97b63c-c377-414e-96e8-545c21834270">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Copy_of_addFlow" doc:id="096009a6-2756-4e21-bc3e-a48596ee18c6" >
+		<http:listener doc:name="/updateso" doc:id="cb7c2aa2-a67c-4aee-8d01-4b4581404540" config-ref="HTTP_Listener_config" path="/updateso" />
+		<ee:transform doc:name="Transform Message" doc:id="d3289341-e717-4563-a706-e76f19876298" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:sales.transactions.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#update: {
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "506"): {
+						ns02#name: "ACC00006"
+					},
+					ns01#line: "1"
+				},
+				ns01#item: {
+					ns01#item @(internalId: "510"): {
+						ns02#name: "ACC00009"
+					},
+					ns01#line: "2"
+				}
+			}
+		}
+}}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:update doc:name="Update" doc:id="0e2ac2b2-23db-4301-815d-5abc6eb0bc32" config-ref="NetSuite_Config" type="SalesOrder"/>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="73a9191f-8dcd-44cf-bebd-cbee28970d60" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
