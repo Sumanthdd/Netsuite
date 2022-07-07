@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="searchFlow" doc:id="8c60463d-fc46-473c-b26b-b167453765a9" >
+		<http:listener doc:name="/searchinv" doc:id="4de34f64-c70a-4b3c-b87a-c99716bb78df" config-ref="HTTP_Listener_config" path="/searchinv"/>
+		<ee:transform doc:name="Invoice Input" doc:id="837c42ad-7f93-45a4-9ec0-fe03e9953418">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0  urn:messages_2020_2.platform.webservices.netsuite.com
+ns ns01 urn:common_2020_2.platform.webservices.netsuite.com
+ns ns02 urn:core_2020_2.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+ns ns03 urn:messages.platform.webservices.netsuite.com
+ns ns04 urn:common.platform.webservices.netsuite.com
+ns ns05 urn:core.platform.webservices.netsuite.com
+ns ns06 urn:sales.transactions.webservices.netsuite.com
+---
+{
+	ns03#search: {
+		ns03#searchRecord @("xmlns:ns01": ns01, xsi#"type": "ns01:TransactionSearchBasic"): {
+			
+				ns04#transactionNumber @(operator: "is"): {
+					ns05#searchValue: "INV00001031"
+				}
+			
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:search doc:name="Invoice" doc:id="b1b9a434-ce59-43e5-ac31-57ed2d4779b5" config-ref="NetSuite_Config" key="TransactionSearchBasic" />
+		<ee:transform doc:name="to json" doc:id="12f0c4ec-d112-4b78-b981-1b83511aee08">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
