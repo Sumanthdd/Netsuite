@@ -8,33 +8,48 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
 	<flow name="asyncAddListFlow" doc:id="088fd81c-bad3-4162-a46e-3c1a87608c78" >
 		<http:listener doc:name="/asyncaddlist" doc:id="d63bb204-6a38-49e8-9d18-b27d8fa3a544" config-ref="HTTP_Listener_config" path="/asyncaddlist"/>
-		<ee:transform doc:name="Employee input" doc:id="0eac3bd6-8b36-436e-ba33-7e8ac62a32c3">
+		<ee:transform doc:name="SalesOrder input" doc:id="0eac3bd6-8b36-436e-ba33-7e8ac62a32c3">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/xml
 ns ns0 urn:messages.platform.webservices.netsuite.com
-ns ns01 urn:employees.lists.webservices.netsuite.com
+ns ns01 urn:sales.transactions.webservices.netsuite.com
+ns ns02 urn:core.platform.webservices.netsuite.com
 ns xsi http://www.w3.org/2001/XMLSchema-instance
 ---
 {
 	ns0#asyncAddList: {
-		ns01#record @(xsi#"type": "ns01:Employee"): {
-			ns01#firstName: "Sumanth",
-			ns01#lastName: "Dasari",
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
 			ns01#email: "Sumanthdasari@gmail.com",
-			ns01#subsidiary @(internalId: "1"): null
-		},
-		ns01#record @(xsi#"type": "ns01:Employee"): {
-			ns01#firstName: "Prathamesh",
-			ns01#lastName: "Kadam",
-			ns01#email: "Prathakadam@gmail.com",
-			ns01#subsidiary @(internalId: "1"): null
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "506"): {
+						ns02#name: "ACC00006"
+					},
+					ns01#line: "1"
+				}}},
+		ns01#record @(xsi#"type": "ns01:SalesOrder"): {
+			ns01#entity @(internalId: "7754"): {
+				ns02#name: "SD Company"
+			},
+			ns01#email: "Sumanthdasari@gmail.com",
+			ns01#itemList: {
+				ns01#item: {
+					ns01#item @(internalId: "510"): {
+						ns02#name: "ACC00009"
+					},
+					ns01#line: "1"
+				}
+			}
 		}
-	}
-}]]></ee:set-payload>
+	
+}}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<netsuite:async-add-list doc:name="Employee" doc:id="1790a0b6-1e66-426f-8cb4-cfd6bee811de" config-ref="NetSuite_Config" type="Employee" />
+		<netsuite:async-add-list doc:name="SalesOrder" doc:id="1790a0b6-1e66-426f-8cb4-cfd6bee811de" config-ref="NetSuite_Config" type="SalesOrder" />
 		<ee:transform doc:name="to json" doc:id="98416175-abb3-41df-94b2-4f45d910cd23">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0

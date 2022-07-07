@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
 	<flow name="asyncDeleteListFlow" doc:id="2d84d5d8-d17c-4b83-b317-90183b9e9d98" >
 		<http:listener doc:name="/asyncdeletelist" doc:id="78884488-3d8c-4c26-8d52-5c2a90d861e3" config-ref="HTTP_Listener_config" path="/asyncdeletelist"/>
-		<ee:transform doc:name="Employee input" doc:id="2cde7887-ba68-47f7-86ce-e743c3fada7e">
+		<ee:transform doc:name="SalesOrder input" doc:id="2cde7887-ba68-47f7-86ce-e743c3fada7e">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/xml
@@ -18,13 +18,13 @@ ns xsi http://www.w3.org/2001/XMLSchema-instance
 ---
 {
 	ns0#asyncDeleteList: {
-		ns01#baseRef @(internalId: "7454" ,"type":"employee", xsi#"type": "ns01:RecordRef"): null,
-		ns01#baseRef @(internalId: "7455" ,"type":"employee", xsi#"type": "ns01:RecordRef"): null
+		ns01#baseRef @(internalId: "11633" ,"type":"salesOrder", xsi#"type": "ns01:RecordRef"): null,
+		ns01#baseRef @(internalId: "11632" ,"type":"salesOrder", xsi#"type": "ns01:RecordRef"): null
 	}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<netsuite:async-delete-list doc:name="Employee" doc:id="fed4ba67-1405-4721-8cc1-a96d35628a8d" config-ref="NetSuite_Config" />
+		<netsuite:async-delete-list doc:name="SalesOrder" doc:id="fed4ba67-1405-4721-8cc1-a96d35628a8d" config-ref="NetSuite_Config" />
 		<ee:transform doc:name="to json" doc:id="fb3d3cb5-4095-4b69-9a40-40d032f2ac1d">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
