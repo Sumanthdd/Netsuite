@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getDeletedFlow" doc:id="91ad394b-60c3-4999-b1db-050c5c1d7495" >
+		<http:listener doc:name="/deleted" doc:id="d180fe8b-6423-49ae-bbcb-239697447855" config-ref="HTTP_Listener_config" path="/deleted"/>
+		<ee:transform doc:name="input" doc:id="2e33541d-3064-4646-b7c4-ee6496b85e03">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#getDeletedFilter: {
+		ns01#deletedDate @(operator: "on"): {
+			ns01#searchValue: "2019-06-30T10:23:18.732976Z"
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-deleted doc:name="Get deleted" doc:id="cf73f600-b40f-499c-9099-ca67fc244b38" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="35534ae4-ac1f-4ec9-b780-012e18819a2c">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

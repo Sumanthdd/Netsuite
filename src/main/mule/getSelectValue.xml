@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:netsuite="http://www.mulesoft.org/schema/mule/netsuite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/netsuite http://www.mulesoft.org/schema/mule/netsuite/current/mule-netsuite.xsd">
+	<flow name="getSelectValueFlow" doc:id="3dc44268-f446-41d4-9a2e-e0eb2785ed47" >
+		<http:listener doc:name="/selectvalue" doc:id="11a1fb96-7585-4058-a952-892431fbe4b1" config-ref="HTTP_Listener_config" path="/selectvalue"/>
+		<ee:transform doc:name="SalesOrder" doc:id="432f1221-7db4-44f1-baa4-19c43d908719">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 urn:messages.platform.webservices.netsuite.com
+ns ns01 urn:core.platform.webservices.netsuite.com
+---
+{
+	ns0#fieldDescription: {
+		ns01#recordType: "salesOrder",
+		ns01#sublist: "itemList",
+		ns01#field: "item"
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:get-select-value doc:name="Get select value" doc:id="e89968a7-23c8-4e37-8a75-e9de4cbf60f1" config-ref="NetSuite_Config" />
+		<ee:transform doc:name="to json" doc:id="6f821f53-59f6-41b7-bf82-e1f5afaceb7f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

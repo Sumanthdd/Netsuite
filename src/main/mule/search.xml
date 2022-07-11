@@ -44,4 +44,80 @@ payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
+	<flow name="searchFlow1" doc:id="908b5d17-fc04-4475-9ffd-cb0c8e4ce4c3" >
+		<http:listener doc:name="/searchso" doc:id="a74e4098-236c-404a-8b63-3b144ca38590" config-ref="HTTP_Listener_config" path="/searchso"/>
+		<ee:transform doc:name="SalesOrder input" doc:id="0bb262e5-a732-4728-a396-4a0e897c93db">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0  urn:messages_2020_2.platform.webservices.netsuite.com
+ns ns01 urn:common_2020_2.platform.webservices.netsuite.com
+ns ns02 urn:core_2020_2.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+ns ns03 urn:messages.platform.webservices.netsuite.com
+ns ns04 urn:common.platform.webservices.netsuite.com
+ns ns05 urn:core.platform.webservices.netsuite.com
+ns ns06 urn:sales.transactions.webservices.netsuite.com
+---
+{
+	ns03#search: {
+		ns03#searchRecord @("xmlns:ns01": ns01, xsi#"type": "ns01:TransactionSearchBasic"): {
+			
+				ns04#transactionNumber @(operator: "is"): {
+					ns05#searchValue: "SLS00000475"
+				}
+			
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:search doc:name="SalesOrder" doc:id="2cf41224-ce8c-42d0-9c2c-6496ea60a57a" config-ref="NetSuite_Config" key="TransactionSearchBasic" />
+		<ee:transform doc:name="to json" doc:id="9f555167-3803-40c7-8e4a-93758bb0330b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="searchFlow2" doc:id="e5b59ba4-2212-428a-a275-f73510a9058a" >
+		<http:listener doc:name="/searchpo" doc:id="d08002a6-f2dc-4837-9dfd-dd93d31fcf18" config-ref="HTTP_Listener_config" path="/searchpo"/>
+		<ee:transform doc:name="PurchaseOrder input" doc:id="7bd04a43-8859-4148-afcb-127425a0970b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0  urn:messages_2020_2.platform.webservices.netsuite.com
+ns ns01 urn:common_2020_2.platform.webservices.netsuite.com
+ns ns02 urn:core_2020_2.platform.webservices.netsuite.com
+ns xsi http://www.w3.org/2001/XMLSchema-instance
+ns ns03 urn:messages.platform.webservices.netsuite.com
+ns ns04 urn:common.platform.webservices.netsuite.com
+ns ns05 urn:core.platform.webservices.netsuite.com
+ns ns06 urn:sales.transactions.webservices.netsuite.com
+---
+{
+	ns03#search: {
+		ns03#searchRecord @("xmlns:ns01": ns01, xsi#"type": "ns01:TransactionSearchBasic"): {
+			
+				ns04#transactionNumber @(operator: "is"): {
+					ns05#searchValue: "PUR00001328"
+				}
+			
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<netsuite:search doc:name="Purchase Order" doc:id="7035bdb9-5a6c-4705-aecb-805f85a5a76c" config-ref="NetSuite_Config" key="TransactionSearchBasic" />
+		<ee:transform doc:name="to json" doc:id="1e6b9073-5375-4214-be8b-5d1842e2545b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>
